@@ -131,6 +131,9 @@ extension InputFormViewController: UITableViewDataSource,UITableViewDelegate {
         if inputTitle[indexPath.row] == "Date of birth:"{
             cell.textField.placeholder = "dd/mm/yyyy"
         }
+        else if inputTitle[indexPath.row] == "Gender"{
+            cell.textField.placeholder = "male/female/other"
+        }
         else{
             cell.textField.placeholder = "Enter your \(inputTitle[indexPath.row].prefix(inputTitle[indexPath.row].count - 1))"
         }

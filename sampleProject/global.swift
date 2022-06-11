@@ -20,7 +20,6 @@ let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
 let fileurl = url.appendingPathComponent("allUsersDetails.plist")
 
 func getDataFromPlist() -> [user] {
-    print(url)
     guard let data = try? Data(contentsOf: fileurl) else{
         print("failed to get data from plist")
         return []

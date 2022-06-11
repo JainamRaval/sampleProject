@@ -10,7 +10,6 @@ import UIKit
 class AllUsersViewController: UIViewController {
 
     var allUser = [user]()
-    var collectionOfSwitches = [UISwitch]()
     
     let tableView:UITableView = {
         let tableview = UITableView()
@@ -36,15 +35,8 @@ class AllUsersViewController: UIViewController {
         setupTableView()
         
         allUser = getDataFromPlist()
-        
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        for Switch in collectionOfSwitches {
-            Switch.addTarget(self, action: #selector(switchToggled), for: .valueChanged)
-        }
-    }
+
     
     func setupTableView(){
         view.addSubview(tableView)
@@ -55,11 +47,23 @@ class AllUsersViewController: UIViewController {
         tableView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor).isActive = true
     }
     
-    @objc func switchToggled(){
-        for i in 0..<allUser.count{
-            allUser[i].isPassed = collectionOfSwitches[i].isOn
-        }
+    @objc func switchToggled(sender: UISwitch){
+        allUser[sender.tag].isPassed = sender.isOn
         addDataIntoPlist(allUser)
+    }
+    
+    func configurCell(cell: CustomCellForAllUser,row: Int){
+        let user = allUser[row]
+        cell.nameLabel.text = user.firstName + " " + user.lastName
+        cell.dobLabel.text = "Date of birth: " + user.dateOfBirth
+        cell.genderLabel.text = "Gender: " + user.gender
+        cell.emailLabel.text = "Email id: " + user.email
+        cell.hobbyLabel.text = "Hobby: " + user.hobby
+        cell.nameLabel.font = UIFont.boldSystemFont(ofSize: 20)
+        cell.isPassedSwitch.isOn = user.isPassed
+        cell.isPassedSwitch.addTarget(self, action: #selector(switchToggled(sender:)), for: .valueChanged)
+        cell.isPassedSwitch.tag = row
+        cell.selectionStyle = .none
     }
 }
 
@@ -72,16 +76,7 @@ extension AllUsersViewController: UITableViewDataSource,UITableViewDelegate {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "allUsersCell", for: indexPath) as? CustomCellForAllUser else{
             return UITableViewCell()
         }
-        let user = allUser[indexPath.row]
-        cell.nameLabel.text = user.firstName + " " + user.lastName
-        cell.dobLabel.text = "Date of birth: " + user.dateOfBirth
-        cell.genderLabel.text = "Gender: " + user.gender
-        cell.emailLabel.text = "Email id: " + user.email
-        cell.hobbyLabel.text = "Hobby: " + user.hobby
-        cell.nameLabel.font = UIFont.boldSystemFont(ofSize: 20)
-        cell.isPassedSwitch.isOn = user.isPassed
-        collectionOfSwitches.append(cell.isPassedSwitch)
-        cell.selectionStyle = .none
+        configurCell(cell: cell, row: indexPath.row)
         return cell
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
